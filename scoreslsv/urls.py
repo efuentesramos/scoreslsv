@@ -22,7 +22,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('training/',include(('apps.training.urls','training'))),
     path('home/',Home,name='index'),
-    path('processing/',Processing,name='processing')
+    path('processing/',Processing,name='processing'),
+    path('student/',include('apps.training.api.urls')),
+    path('teacher/',include('apps.training.api.urls')),
+    path('course/',include('apps.training.api.urls')),
+    path('score/',include('apps.training.api.urls'))
     
     
 ]
