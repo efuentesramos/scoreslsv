@@ -42,12 +42,12 @@ class Course(models.Model):
     
     name = models.CharField(max_length=50,unique=True)    
     
-    total_hours = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(500)])
+    total_hours = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(500)],default=0)
     
     description = models.TextField(max_length=500,null=True,blank=True)
     
     teacher_id = models.ForeignKey(Teacher,
-                                on_delete=models.CASCADE,)
+                                on_delete=models.CASCADE,null=True,blank=True)
     
     def __str__(self):
         return self.name

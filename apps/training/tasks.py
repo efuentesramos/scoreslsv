@@ -1,5 +1,6 @@
 
 import pandas as pd
+import requests, bs4
 from .models import Student,Teacher,Course,Score
 from apps.training.utils.validator import ValidatorField
 
@@ -63,8 +64,7 @@ def loadTeacher(sender=None, args=None, file_data=None, **kwargs):
         df_teacher = pd.read_excel(file_data,"PROFESOR")
         colunm_names_df=set(df_teacher.columns.values)
         if isinstance( df_teacher,pd.core.frame.DataFrame) and colunm_required.issubset(colunm_names_df):
-            print("#####--EL DF TEACHER fue generado con EXITO-#####")
-            print("#----buscando ")
+            
 
             for index,row in df_teacher.iterrows():
 
@@ -165,4 +165,35 @@ def loadScores(sender=None, args=None, file_data=None, **kwargs):
     except Exception as error_plan:
         pass 
 
+@app.task
+def scrapCourse():
     
+    res = requests.get('https://grow.google/intl/es/courses-and-tools/?category=career&topic=cloud-computing')
+    #res = requests.get(url)
+
+
+    res.raise_for_status()
+
+    course_googleSoup = bs4.BeautifulSoup(res.text, 'html.parser')
+
+    courses = course_googleSoup.select('a[data-gtm-tag="course-card"]')
+
+
+    for course in courses:
+
+        name_course=course.find(class_='glue-headline').text
+        description_course=course.find(class_='glue-card__description').text
+
+        print('CURSO : {}'.format(name_course))
+        print('DESCRIPCION : {}'.format(description_course))
+        print('----------------------------')
+
+        try:
+            obj = Course.objects.get(name__iexact=name_course)
+        except Course.DoesNotExist:
+
+            obj = Course(name=name_course, 
+                description=description_course,
+                
+            )
+            obj.save()

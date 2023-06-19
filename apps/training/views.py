@@ -1,10 +1,10 @@
 from django.shortcuts import render,redirect
-from .forms import uploaderForm
+from .forms import uploaderForm,scrapperForm
 import pandas as pd
 import base64
 from .models import Student,Teacher,Course,Score
 from apps.training.utils.validator import ValidatorField
-from apps.training.tasks import  loadStudent,loadTeacher,loadCourse, loadScores
+from apps.training.tasks import  loadStudent,loadTeacher,loadCourse, loadScores, scrapCourse
 
 # Create your views here.
 
@@ -15,6 +15,23 @@ def Home(request):
 def Processing (request):
 
     return render(request,'training/in_process.html')
+
+def loadCourseFramPage (request):
+
+    if request.method== 'POST':
+        scrapper_form=scrapperForm(request.POST)
+        
+        scrapCourse.delay()
+
+        return redirect('processing')
+    else:
+        pass
+        
+        scrapper_form=scrapperForm()
+    
+    
+    return render(request,'training/scrapping_course.html',{'scrapper_form':scrapper_form})
+
 
 def uploaderInfo(request):
 
