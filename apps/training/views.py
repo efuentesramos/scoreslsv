@@ -4,8 +4,7 @@ import pandas as pd
 import base64
 from .models import Student,Teacher,Course,Score
 from apps.training.utils.validator import ValidatorField
-from apps.training.tasks import  loadStudent,loadTeacher,loadCourse, loadScores, scrapCourse
-
+from apps.training.tasks import  loadStudent,loadTeacher,loadCourse, loadScores, scrapCourse, sendEmailAboutImporter
 # Create your views here.
 
 def Home(request):
@@ -49,6 +48,8 @@ def uploaderInfo(request):
         loadCourse(file_data=content)
 
         loadScores(file_data=content)
+
+        sendEmailAboutImporter()
 
     
         return redirect('processing')
