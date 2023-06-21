@@ -1,4 +1,5 @@
 
+import os
 import pandas as pd
 import requests, bs4
 import json
@@ -236,18 +237,22 @@ def sendEmailAboutImporter(sender=None, args=None, **kwargs):
     # setup the parameters of the message 
     password = "notificador12345"
     msg['From'] = "notificadorlsv@hotmail.com"
-    msg['To'] = "efuentesramos79@gmail.com"
+    msg['To'] = "notificadorlsv@gmail.com"
     msg['Subject'] = "Status Importer"
     # add in the message body 
     msg.attach(MIMEText(message, 'plain'))
-    #create server 
-    server = smtplib.SMTP('smtp.office365.com: 587')
-    server.starttls()
-    # Login Credentials for sending the mail 
-    server.login(msg['From'], password,initial_response_ok = True)
-    # send the message via the server. 
-    server.sendmail(msg['From'], msg['To'], msg.as_string())
-    server.quit()
+    try:
+        #create server 
+        server = smtplib.SMTP('smtp.office365.com: 587')
+        server.starttls()
+        # Login Credentials for sending the mail 
+        server.login(msg['From'], password,initial_response_ok = True)
+        # send the message via the server. 
+        server.sendmail(msg['From'], msg['To'], msg.as_string())
+        server.quit()
+    except Exception as e:
+        
+        print('Error al enviar el correo:', str(e))
   
 
 @app.task
